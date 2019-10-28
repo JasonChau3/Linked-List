@@ -3,6 +3,7 @@
  * PID: A14388619
  */
 
+
 import java.util.AbstractList;
 
 /**
@@ -59,7 +60,6 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
          * Accessor to get the Nodes Element
          */
         public T getElement() {
-            //TODO: complete implementation
             return this.data;
         }
 
@@ -69,7 +69,6 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
          * @param n new next node
          */
         public void setNext(Node n) {
-            //TODO: complete implementation
             this.next = n;
             n.prev = this;
         }
@@ -134,7 +133,6 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
      */
     @Override
     public boolean add(T element) throws NullPointerException {
-        //TODO: Implementation for throwing exceptions followed by
         if (element == null){
             throw new NullPointerException();
         }
@@ -160,7 +158,9 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
      * Adds an element to a certain index in the list, shifting exist elements
      * create room. Does not accept null values.
      *
-     * TODO: Javadoc comments
+     * @param element data to be added, at what index
+     * @throws NullPointerException if data received is null
+     * @throws IndexOutOfBoundsException if index is out of bounds
      */
     @Override
     public void add(int index, T element)
@@ -205,7 +205,8 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     /**
      * Determine if the list contains the data element anywhere in the list.
      *
-     * TODO: Javadoc comments
+     * @param element data to be added, at what index
+     * @return whether or not the element is in the list
      */
     @Override
     public boolean contains(Object element) {
@@ -224,11 +225,12 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     /**
      * Retrieves the element stored with a given index on the list.
      *
-     * TODO: Javadoc comments
+     * @param index at what index the data is added
+     * @throws IndexOutOfBoundsException when the index is out of bounds
+     * @return the element at the index
      */
     @Override
     public T get(int index) throws IndexOutOfBoundsException {
-        //TODO: Fill in implementation to get the node at index
         if (index > (nelems-1) || index < 0){
             throw new IndexOutOfBoundsException();
         }
@@ -240,7 +242,8 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     /**
      * Helper method to get the Nth node in our list
      *
-     * TODO: Javadoc comments
+     * @param index at what index you want the node
+     * @return the node to get
      */
     private Node getNth(int index) {
         Node current = this.head.getNext();
@@ -253,11 +256,10 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     /**
      * Determine if the list empty
      *
-     * TODO: javadoc comments
+     * @return whether or not the list is empty
      */
     @Override
     public boolean isEmpty() {
-        //TODO: implement isEmpty
        if (this.nelems == 0){
            return true;
        }
@@ -268,7 +270,9 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     /**
      * Remove the element from position index in the list
      *
-     * TODO: javadoc comments
+     * @param index at what index the node is to be removed
+     * @throws IndexOutOfBoundsException when the index is out of bounds
+     * @return the element at the index that was removed
      */
     @Override
     public T remove(int index) throws IndexOutOfBoundsException {
@@ -291,7 +295,11 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     /**
      * Set the value of an element at a certain index in the list.
      *
-     * TODO: javadoc comments
+     * @param index at what index the node is to be removed
+     * @param element what is the new data you want it to be set
+     * @throws IndexOutOfBoundsException when the index is out of bounds
+     * @throws NullPointerException if the element is null
+     * @return the element at the index that was previously set
      */
     @Override
     public T set(int index, T element)
@@ -313,7 +321,7 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     /**
      * Retrieves the amount of elements that are currently on the list.
      *
-     * TODO: javadoc comments
+     * @return the size of the list
      */
     @Override
     public int size() {
@@ -323,25 +331,64 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
     /**
      * Inserts another linked list of the same type into this one
      *
-     * TODO: javadoc comments
+     * @param index at what index the node is to be inserted
+     * @param otherList the list to splice iinto
+     * @throws IndexOutOfBoundsException when the index is out of bounds
      */
     public void splice(int index, DoublyLinkedList<T> otherList) throws IndexOutOfBoundsException {
-        //TODO: Determine if index is valid
+        if (index < 0 && index > otherList.size()) {
+            throw new IndexOutOfBoundsException();
+        }
 
-        //TODO: Splicing implementation. HINT: remember DoublyLinkedList's  have dummy nodes
+        //add other list to the index specified
+        int counter = index;
+        Node current = otherList.head.getNext();
+        while(current != otherList.tail) {
+            T newno = current.getElement();
+            this.add(counter,newno);
+            counter++;
+            current = current.getNext();
+        }
+
     }
 
     /**
      * Determine the starting indices that match the subSequence
      *
-     * TODO: javadoc comments
+     * @param subsequence sequence to match
+     * @return an array of ints holding all the starting positions that match the subsequence
      */
     public int[] match(DoublyLinkedList<T> subsequence) {
 
         //A list to hold all the starting indices found
         DoublyLinkedList<Integer> indices = new DoublyLinkedList<>();
 
-        //TODO: Add implementation to find the starting indices
+        boolean ismatch = true;
+        int counter;
+        for(int x = 0; x < this.size(); x++){
+            //if the first element matchesuu
+            if (subsequence.size() == 0){
+                break;
+            }
+            if (this.get(x) == subsequence.get(0)){
+                //check if the rest of the elements match
+                counter = x+1;
+                for (int y = 1; y<subsequence.size(); y++){
+                    if (counter >= this.size()){
+                        ismatch = false;
+                        break;
+                    }
+                    if (this.get(counter).equals(subsequence.get(y)) == false){
+                        ismatch = false;
+                    }
+                    counter++;
+                }
+                if ( ismatch == true) {
+                    indices.add(x);
+                }
+                }
+            ismatch = true;
+            }
 
         // Array Conversion
         int[] startingIndices = new int[indices.size()];
@@ -350,7 +397,6 @@ public class DoublyLinkedList<T> extends AbstractList<T> {
         }
         return startingIndices;
     }
-
 }
 
 

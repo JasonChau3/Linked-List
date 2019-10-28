@@ -1,14 +1,15 @@
 /*
- * NAME: TODO First Last
- * PID: TODO Axxxxxxxx
+ * NAME: Jaosn Chau
+ * PID:  A14388619
  */
+
 
 
 /**
  * Gene Splicing CRISPR Simulator
  *
- * @author TODO
- * @since TODO
+ * @author Jason chau
+ * @since 10/29/2019
  */
 public class CRISPR {
 
@@ -34,6 +35,19 @@ public class CRISPR {
     public static void main(String[] args) {
         /*Should print out ACATATA (unchanged)*/
         System.out.println(spliceDNA(simpleGenome, overlappingGuide, splicedGene));
+        simpleGenome = "ATATATAT";
+        guideRNA= "UA";
+        splicedGene = "CAT";
+        System.out.println(spliceDNA(simpleGenome,guideRNA,splicedGene));
+        simpleGenome = "ATATA";
+        guideRNA= "CG";
+        splicedGene = "CAT";
+        System.out.println(spliceDNA(simpleGenome,guideRNA,splicedGene));
+        simpleGenome = "ACATATA";
+        guideRNA= "UA";
+        splicedGene = "CAT";
+        System.out.println(spliceDNA(simpleGenome,guideRNA,splicedGene));
+
     }
 
     /**
@@ -51,7 +65,37 @@ public class CRISPR {
         populateFromDNA(genome, genomeSequence);
         populateDNAFromRNA(guideRNA, guideSequence);
 
-        //TODO: Implement a splicing algorithm with will add the splicedSequence where appropriate to genome
+
+        // get locations of the starting positions of the matched guidesequence
+        //initial posiion has to be at least length size away from initial position
+        int[] matchedpos = genome.match(guideRNA);
+        for (int x =0; x < matchedpos.length; x++){
+            //if last position
+            if (x+1 > matchedpos.length -1){
+                break;
+            }
+            if (matchedpos[x] + guideRNA.size() > matchedpos[x+1] && matchedpos[x] != -1){
+                matchedpos[x] = -1;
+                matchedpos[x+1] = -1;
+            }
+        }
+        int cont;
+
+        DoublyLinkedList<Character> spliced = new DoublyLinkedList<>();
+        populateFromDNA(spliced,splicedSequence);
+        int sizer = 0;
+        for(int x = 0; x < matchedpos.length; x++){
+            cont = matchedpos[x];
+            if (cont == -1){
+                continue;
+            }
+
+
+            sizer += guideSequence.length();
+            genome.splice(cont+sizer,spliced);
+            sizer++;
+        }
+
 
         return transcribeGeneticCode(genome);
     }
@@ -63,6 +107,10 @@ public class CRISPR {
      */
     public static void populateFromDNA(DoublyLinkedList<Character> dnaList, String dnaString) {
         //TODO: Populate dnaList with the characters in s
+        char[] chars = dnaString.toCharArray();
+        for (int x = 0; x < chars.length; x++){
+            dnaList.add(chars[x]);
+        }
     }
 
     /**
@@ -73,7 +121,22 @@ public class CRISPR {
      * @param rnaString RNA string encoding
      */
     public static void populateDNAFromRNA(DoublyLinkedList<Character> dnaList, String rnaString) {
-        //TODO: Populate dnaList with the DNA representation of the RNA Sequence
+        char[] chars = rnaString.toCharArray();
+        int counter;
+        String rna = "AUCG";
+        String dna = "TAGC";
+
+        char[] conversion = rna.toCharArray();
+        char[] unconverted = dna.toCharArray();
+        for (int x = 0; x< chars.length; x++){
+            for (int y = 0; y < conversion.length; y++){
+                if (chars[x] == conversion[y]){
+                    dnaList.add(unconverted[y]);
+                    break;
+                }
+            }
+        }
+
     }
 
     /**
